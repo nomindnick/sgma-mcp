@@ -36,7 +36,7 @@ After Phase 3, the database is populated and queryable. After Phase 4, the MCP s
 
 ## Phase 2: Data Extraction Pipeline
 
-### Sprint 2.1 — Raw Extraction and Segmentation
+### Sprint 2.1 — Raw Extraction and Segmentation ✅
 
 **Goal:** Extract raw text from the PDF and segment it by content type using known page boundaries.
 
