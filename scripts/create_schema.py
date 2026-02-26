@@ -9,10 +9,6 @@ import sqlite_vec
 DB_PATH = Path("data/sgma.db")
 
 SCHEMA_SQL = """
--- Enable WAL mode and foreign keys
-PRAGMA journal_mode=WAL;
-PRAGMA foreign_keys=ON;
-
 -- Core tables
 
 CREATE TABLE IF NOT EXISTS sections (
@@ -142,12 +138,17 @@ def create_schema(db_path: Path = DB_PATH) -> None:
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
     conn = sqlite3.connect(db_path)
-    conn.executescript(SCHEMA_SQL)
 
-    # Load and verify sqlite-vec extension
+    # Set per-connection PRAGMAs (these don't persist across connections)
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=ON")
+
+    # Load sqlite-vec before schema DDL so vec0 virtual tables can be created
     conn.enable_load_extension(True)
     sqlite_vec.load(conn)
     conn.enable_load_extension(False)
+
+    conn.executescript(SCHEMA_SQL)
 
     vec_version = conn.execute("SELECT vec_version()").fetchone()[0]
     print(f"sqlite-vec version: {vec_version}")

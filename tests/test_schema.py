@@ -32,6 +32,7 @@ def db_path(tmp_path):
 @pytest.fixture
 def conn(db_path):
     c = sqlite3.connect(db_path)
+    c.execute("PRAGMA foreign_keys=ON")
     c.enable_load_extension(True)
     sqlite_vec.load(c)
     c.enable_load_extension(False)
@@ -106,6 +107,13 @@ class TestConstraints:
             conn.execute(
                 "INSERT INTO sections (code, section_number, full_text, content_type) "
                 "VALUES ('water_code', '10720', 'duplicate', 'statute')"
+            )
+
+    def test_foreign_key_enforcement(self, conn):
+        with pytest.raises(sqlite3.IntegrityError):
+            conn.execute(
+                "INSERT INTO definitions (term, definition_text, source_section_id) "
+                "VALUES ('test', 'test def', 999)"
             )
 
     def test_different_codes_same_number_allowed(self, conn):

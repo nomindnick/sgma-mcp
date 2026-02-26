@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
 
@@ -19,12 +20,19 @@ class Settings(BaseSettings):
     chunk_token_threshold: int = 500
     chunk_overlap_tokens: int = 50
 
-    # Search weights (must sum to 1.0)
+    # Search weights
     search_weight_keyword: float = 0.4
     search_weight_semantic: float = 0.6
 
+    @model_validator(mode="after")
+    def _check_search_weights(self):
+        total = self.search_weight_keyword + self.search_weight_semantic
+        if abs(total - 1.0) > 1e-6:
+            raise ValueError(f"Search weights must sum to 1.0, got {total}")
+        return self
+
     # Server
-    mcp_transport: str = "stdio"
+    mcp_transport: str = "sse"
     host: str = "0.0.0.0"
     port: int = 8000
 
