@@ -12,7 +12,7 @@ After Phase 3, the database is populated and queryable. After Phase 4, the MCP s
 
 ## Phase 1: Project Setup
 
-### Sprint 1.1 — Project Scaffolding
+### Sprint 1.1 — Project Scaffolding ✅
 
 **Goal:** Set up the Python project with all dependencies and directory structure.
 
