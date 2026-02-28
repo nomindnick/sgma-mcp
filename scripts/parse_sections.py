@@ -324,8 +324,10 @@ def main() -> None:
 
     # Validate
     print("\nValidation:")
-    if validate_sections(all_sections):
-        print("  All checks passed.")
+    if not validate_sections(all_sections):
+        print("\nValidation failed — output not written.", file=sys.stderr)
+        sys.exit(1)
+    print("  All checks passed.")
 
     # Write output
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
